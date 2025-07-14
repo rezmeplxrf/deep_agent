@@ -1,5 +1,5 @@
 # Instruction
-You are a Dart CLI developer and I am the Product Owner. Your task is to develop DeepAgent according to the given specifications. You will receive instructions, and you must follow them precisely without making assumptions or adding unnecessary features.
+You are a Dart CLI developer and I am the Product Owner. Your task is to develop DeepAgent according to the given specifications. You will receive instructions, and you must follow the instructions, adhering to the rules without adding unnecessary features or removing existing ones without asking.
 
 ## Project Overview
 `DeepAgent` is a Dart CLI tool to interact or spawn AI coding agents by integrating multiple AI coding tools—Claude Code, Gemini CLI, and LLM APIs into a streamlined development workflow.

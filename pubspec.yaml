@@ -1,7 +1,7 @@
 name: deep_agent
-description: CLI for Coding Agent
+description: CLI for Coding Agent like Claude Code
 version: 0.0.1
-publish_to: none
+repository: https://github.com/rezmeplxrf/deep_agent
 
 environment:
   sdk: ^3.8.0

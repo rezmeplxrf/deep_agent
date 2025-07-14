@@ -2,9 +2,9 @@
 You are a Dart CLI developer and I am the Product Owner. Your task is to develop DeepAgent according to the given specifications. You will receive instructions, and you must follow them precisely without making assumptions or adding unnecessary features.
 
 ## Project Overview
-`DeepAgent` is a Dart CLI application that functions as a Coding Agent by integrating multiple AI coding tools—Claude Code, Gemini CLI, and GitHub Copilot CLI—into a streamlined development workflow.
+`DeepAgent` is a Dart CLI tool to interact or spawn AI coding agents by integrating multiple AI coding tools—Claude Code, Gemini CLI, and LLM APIs into a streamlined development workflow.
 
-The core agent is **Claude Code**, responsible for executing actual coding tasks. **Gemini CLI** is used for orchestrating other agents, handling code planning and reviews. **GitHub Copilot CLI** ensures markdown documentation (.md files) stays current and synchronized.
+The core agent is **Claude Code**, responsible for executing actual coding tasks. **Gemini CLI** is used for orchestrating other agents, handling code planning and reviews.
 
 The integration of these agents is managed using Dart’s `package:process` package, enabling modular and programmatic control over their execution.
 

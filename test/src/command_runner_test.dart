@@ -24,7 +24,6 @@ final updatePrompt =
 Run ${lightCyan.wrap('$executableName update')} to update''';
 
 void main() {
-  
   group('DeepAgentCommandRunner', () {
     late PubUpdater pubUpdater;
     late Logger logger;

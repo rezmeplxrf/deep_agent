@@ -6,7 +6,7 @@ You are a Dart CLI developer and I am the Product Owner. Your task is to develop
 
 The core agent is **Claude Code**, responsible for executing actual coding tasks. **Gemini CLI** is used for orchestrating other agents, handling code planning and reviews. **GitHub Copilot CLI** ensures markdown documentation (.md files) stays current and synchronized.
 
-The integration of these agents is managed using Dart’s `Process.run` function, enabling modular and programmatic control over their execution.
+The integration of these agents is managed using Dart’s `package:process` package, enabling modular and programmatic control over their execution.
 
 ## CLI Template
 This project uses the `very_good_cli` template structure. Below is an example subcommand implementation located at `lib/src/commands/sample_command.dart`:
@@ -164,8 +164,4 @@ Run "$executableName help" to see global options.'''),
 
 ## Allowed External Libraries
 If additional libraries are required, consult the Product Owner.
-Use only the following external packages:
-- ansicolor
-- dio
-- cli_completion
-- mason_logger
+Use only what's included in the `pubspec.yaml`.

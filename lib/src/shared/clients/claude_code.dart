@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:deep_agent/src/shared/clients/logger.dart';
+import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
 class ClaudeCode {

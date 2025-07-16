@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
+import 'package:deep_agent/src/shared/utils.dart';
 import 'package:process/process.dart';
 
 class ClaudeCode extends LLMProvider {
@@ -22,7 +23,8 @@ class ClaudeCode extends LLMProvider {
     bool contiune = true,
   }) async {
     late final List<String> command;
-    final escapedPrompt = prompt.replaceAll("'", r"'\''");
+    final escapedPrompt = Utils.escapeShellCommand(prompt);
+
     if (pipedContent != null) {
       if (!pipedContent.existsSync()) {
         throw Exception(
@@ -33,7 +35,7 @@ class ClaudeCode extends LLMProvider {
       command = [
         'bash',
         '-c',
-        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt'",
+        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --output-format json'",
       ];
       logger.log('${pipedContent.path} | $escapedPrompt', Role.user);
     } else {
@@ -42,6 +44,7 @@ class ClaudeCode extends LLMProvider {
         if (contiune) '-c',
         '-p',
         escapedPrompt,
+        '--output-format json',
       ];
       logger.log(escapedPrompt, Role.user);
     }

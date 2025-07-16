@@ -41,29 +41,44 @@ class WorkflowStep {
 
 class AIResponse {
   AIResponse({
+    required this.workflowName,
     this.action,
     this.userAction,
     this.output,
-  });
+    this.error,
+  }) {
+    // if all fields are null, put error message
+    if (action == null &&
+        userAction == null &&
+        output == null &&
+        error == null) {
+      error = 'No response from AI';
+    }
+  }
+  final String workflowName;
   final String? action;
   final UserAction? userAction;
   final String? output;
+  String? error;
 
   @override
   String toString() {
-    return 'AIResponse(action: $action, userAction: $userAction, output: $output)';
+    return 'AIResponse(action: $action, userAction: $userAction, output: $output, error: $error)';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'action': action,
-      'userAction': userAction?.toJson(),
-      'output': output,
+      'workflowStepName': workflowName,
+      if (action != null) 'action': action,
+      if (userAction != null) 'userAction': userAction?.toJson(),
+      if (output != null) 'output': output,
+      if (error != null) 'error': error,
     };
   }
 
   factory AIResponse.fromJson(Map<String, dynamic> json) {
     return AIResponse(
+      workflowName: json['workflowName'] as String,
       action: json['action'] as String?,
       userAction: json['userAction'] != null
           ? UserAction.fromJson(json['userAction'] as Map<String, dynamic>)
@@ -75,28 +90,37 @@ class AIResponse {
 
 /// Shell command result
 class ShellCommandResult {
-  ShellCommandResult({
-    required this.stdout,
+  ShellCommandResult(
+    this.pid,
+    this.exitCode,
+    this.stdout,
     this.stderr,
-  });
+  );
+  final int pid;
+  final int exitCode;
   final String stdout;
   final String? stderr;
+
   @override
   String toString() {
-    return 'ShellCommandResult(stdout: $stdout, stderr: $stderr)';
+    return 'ShellCommandResult(pid: $pid, exitCode: $exitCode, stdout: $stdout, stderr: $stderr)';
   }
 
   Map<String, dynamic> toJson() {
     return {
       'stdout': stdout,
       'stderr': stderr,
+      'exitCode': exitCode,
+      'pid': pid,
     };
   }
 
   factory ShellCommandResult.fromJson(Map<String, dynamic> json) {
     return ShellCommandResult(
-      stdout: json['stdout'] as String,
-      stderr: json['stderr'] as String?,
+      json['pid'] as int,
+      json['exitCode'] as int,
+      json['stdout'] as String,
+      json['stderr'] as String?,
     );
   }
 }

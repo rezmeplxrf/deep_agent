@@ -9,12 +9,13 @@ enum Role {
 
 /// Logger for writing and reading logs to a file with singleton IOSink management.
 class ChatLogger {
-  /// Creates a [ChatLogger] with an optional [file].
-  ChatLogger({File? file}) : _logFile = file ?? _defaultLogFile {
+  /// Creates a [ChatLogger] with an optional [filePath].
+  ChatLogger({String? filePath})
+    : _logFile = (filePath != null) ? File(filePath) : File(_defaultLogFile) {
     _init();
   }
 
-  static final _defaultLogFile = File('./.deep_agent/log.jsonl');
+  static const _defaultLogFile = './.deep_agent/log.jsonl';
   static IOSink? _sharedSink;
   static final Map<String, StreamController<List<int>>> _streamControllers = {};
   static final Map<String, Stream<List<int>>> _streams = {};

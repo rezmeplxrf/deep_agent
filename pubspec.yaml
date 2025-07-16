@@ -17,7 +17,6 @@ dependencies:
   cli_completion: ^0.5.1
   collection: ^1.19.1
   dio: ^5.8.0+1
-  json_serializable: ^6.9.5
   mason_logger: ^0.3.3
 
   process: ^5.0.4

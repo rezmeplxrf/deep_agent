@@ -1,18 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
-class ClaudeCode {
+class ClaudeCode extends LLMProvider {
+  /// A Claude Code LLM provider implementation.
   ClaudeCode({
-    required this.manager,
-    required this.logger,
+    required super.processManager,
+    required super.logger,
   });
-  final ProcessManager manager;
-  final ChatLogger logger;
-  static const String _llmProvider = 'ClaudeCode';
 
+  @override
+  String get name => 'ClaudeCode';
+
+  @override
   Future<String> prompt(
     String prompt, {
     File? pipedContent,
@@ -42,7 +45,7 @@ class ClaudeCode {
       ];
       logger.log(escapedPrompt, Role.user);
     }
-    final result = await manager.run(command);
+    final result = await processManager.run(command);
     if (result.stderr != null && result.stderr.toString().isNotEmpty) {
       logger.log(
         'Error | ${result.stderr}',
@@ -53,7 +56,7 @@ class ClaudeCode {
     final response = result.stdout?.toString().trim();
     logger.log(
       response ?? '',
-      agent: _llmProvider,
+      agent: name,
       Role.assistant,
     );
     return response ?? '';
@@ -62,7 +65,10 @@ class ClaudeCode {
 
 void main() async {
   const processManager = LocalProcessManager();
-  final claudeCode = ClaudeCode(manager: processManager, logger: ChatLogger());
+  final claudeCode = ClaudeCode(
+    processManager: processManager,
+    logger: ChatLogger(),
+  );
 
   final response = await claudeCode.prompt(
     'return the exact conversation so far in markdown format',

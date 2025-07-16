@@ -1,5 +1,5 @@
 # Instruction
-You are a Dart CLI developer and I am the Product Owner. Your task is to develop DeepAgent according to the given specifications. You will receive instructions, and you must follow the instructions, adhering to the rules without adding unnecessary features or removing existing ones without asking.
+You are a Dart CLI developer and I am the Product Owner. Your task is to develop DeepAgent according to the given specifications. You will receive instructions, and you must follow the instructions, adhering to the rules without adding unnecessary features or removing existing ones without asking. Always think hard step by step to ensure clarity and correctness in your implementation.
 
 ## Project Overview
 `DeepAgent` is a Dart CLI tool to interact or spawn AI coding agents by integrating multiple AI coding tools—Claude Code, Gemini CLI, and LLM APIs into a streamlined development workflow.
@@ -147,11 +147,11 @@ Run "$executableName help" to see global options.'''),
     - Each feature should have its own directory. e.g. `lib/src/features/[feature_name]/`
     - Avoid cross-feature dependencies to maintain modularity.
 - Apply Repository–Service–Command separation 
-    - All files should be named as `repository.dart`, `service.dart`, `command.dart`, except for the shared files:
+    - Feature related files should be named as `repository.dart`, `service.dart`, except for the shared files and commands:
     - Repository: Business logic and data access. e.g. `lib/src/features/[feature_name]/repository.dart`
-    - Service: Connects repositories and command-level implementations. e.g. `lib/src/features/[feature_name]/service.dart`
-    - Command: Handles user input and orchestrates service calls. e.g. `lib/src/features/[feature_name]/command.dart`
-    - Shared files should be placed in `lib/src/shared/[descriptive_name].dart`.
+    - Service: Connects repositories. e.g. `lib/src/features/[feature_name]/service.dart`
+    - Command: Handles user input and orchestrates service calls. e.g. `lib/src/commands/[command_name].dart`
+    - Shared files: `lib/src/shared/[descriptive_name].dart`.
 - Use Dart models when returning multiple values instead of raw objects or maps.
 - Ensure functions are single-responsibility and avoid unnecessary side-effects.
 - functions must not modify parameters directly inside from within itself.

@@ -13,7 +13,11 @@ class ClaudeCode {
   final ChatLogger logger;
   static const String _llmProvider = 'ClaudeCode';
 
-  Future<String> prompt(String prompt, {File? pipedContent}) async {
+  Future<String> prompt(
+    String prompt, {
+    File? pipedContent,
+    bool contiune = true,
+  }) async {
     late final List<String> command;
     final escapedPrompt = prompt.replaceAll("'", r"'\''");
     if (pipedContent != null) {
@@ -26,12 +30,13 @@ class ClaudeCode {
       command = [
         'bash',
         '-c',
-        "cat '${pipedContent.path}' | claude -p '$escapedPrompt'",
+        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt'",
       ];
       logger.log('${pipedContent.path} | $escapedPrompt', Role.user);
     } else {
       command = [
         'claude',
+        if (contiune) '-c',
         '-p',
         escapedPrompt,
       ];
@@ -46,9 +51,8 @@ class ClaudeCode {
       throw Exception('Error: ${result.stderr}');
     }
     final response = result.stdout?.toString().trim();
-    // save the response to '.deep_agent/log.md' file with append mode
     logger.log(
-      response ?? 'No response received',
+      response ?? '',
       agent: _llmProvider,
       Role.assistant,
     );
@@ -61,7 +65,7 @@ void main() async {
   final claudeCode = ClaudeCode(manager: processManager, logger: ChatLogger());
 
   final response = await claudeCode.prompt(
-    'hi',
+    'return the exact conversation so far in markdown format',
     // pipedContent: File('./.deep_agent/log.md'),
   );
   print('Response: $response');

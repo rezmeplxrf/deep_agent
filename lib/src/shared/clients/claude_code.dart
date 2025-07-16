@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:deep_agent/src/shared/utils.dart';
@@ -17,7 +19,7 @@ class ClaudeCode extends LLMProvider {
   String get name => 'ClaudeCode';
 
   @override
-  Future<String> prompt(
+  Future<AIResponse> prompt(
     String prompt, {
     File? pipedContent,
     bool contiune = true,
@@ -54,7 +56,9 @@ class ClaudeCode extends LLMProvider {
         'Error | ${result.stderr}',
         Role.assistant,
       );
-      throw Exception('Error: ${result.stderr}');
+      return AIResponse(
+        error: result.stderr.toString().trim(),
+      );
     }
     final response = result.stdout?.toString().trim();
     logger.log(
@@ -62,7 +66,12 @@ class ClaudeCode extends LLMProvider {
       agent: name,
       Role.assistant,
     );
-    return response ?? '';
+    if (response == null || response.isEmpty) {
+      return AIResponse(
+        error: 'No response from Claude Code',
+      );
+    }
+    return AIResponse.fromJson(jsonDecode(response) as Map<String, dynamic>);
   }
 }
 
@@ -74,7 +83,7 @@ void main() async {
   );
 
   final response = await claudeCode.prompt(
-    'return the exact conversation so far in markdown format',
+    'return the exact conversation so far in markdown format'
     // pipedContent: File('./.deep_agent/log.md'),
   );
   print('Response: $response');

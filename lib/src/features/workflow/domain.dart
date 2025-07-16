@@ -1,6 +1,24 @@
 // ignore_for_file: sort_constructors_first
 
-enum LLMProvider { claudeCode, geminiCli, llmApi }
+enum Provider { claudeCode, geminiCli, llmApi }
+
+Provider getProvider(String provider) {
+  switch (provider.toLowerCase()) {
+    case 'claudecode':
+      return Provider.claudeCode;
+    default:
+      throw ArgumentError('Unknown provider: $provider');
+  }
+}
+
+String getProviderName(Provider provider) {
+  switch (provider) {
+    case Provider.claudeCode:
+      return 'ClaudeCode';
+    default:
+      throw ArgumentError('Unknown provider: $provider');
+  }
+}
 
 class WorkflowStep {
   WorkflowStep({
@@ -9,7 +27,7 @@ class WorkflowStep {
     required this.prompt,
   });
   final String name;
-  final LLMProvider provider;
+  final Provider provider;
   final String prompt;
 
   @override
@@ -28,7 +46,7 @@ class WorkflowStep {
   factory WorkflowStep.fromJson(Map<String, dynamic> json) {
     return WorkflowStep(
       name: json['name'] as String,
-      provider: LLMProvider.values.firstWhere(
+      provider: Provider.values.firstWhere(
         (e) => e.name == json['provider'],
         orElse: () => throw ArgumentError(
           'Unknown provider: ${json['provider']}',
@@ -41,7 +59,6 @@ class WorkflowStep {
 
 class AIResponse {
   AIResponse({
-    required this.workflowName,
     this.action,
     this.userAction,
     this.output,
@@ -55,7 +72,6 @@ class AIResponse {
       error = 'No response from AI';
     }
   }
-  final String workflowName;
   final String? action;
   final UserAction? userAction;
   final String? output;
@@ -68,7 +84,6 @@ class AIResponse {
 
   Map<String, dynamic> toJson() {
     return {
-      'workflowStepName': workflowName,
       if (action != null) 'action': action,
       if (userAction != null) 'userAction': userAction?.toJson(),
       if (output != null) 'output': output,
@@ -78,7 +93,6 @@ class AIResponse {
 
   factory AIResponse.fromJson(Map<String, dynamic> json) {
     return AIResponse(
-      workflowName: json['workflowName'] as String,
       action: json['action'] as String?,
       userAction: json['userAction'] != null
           ? UserAction.fromJson(json['userAction'] as Map<String, dynamic>)

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
@@ -19,7 +20,7 @@ abstract class LLMProvider {
   final ChatLogger logger;
 
   /// Prompts the LLM with a given prompt and returns the response.
-  Future<String> prompt(
+  Future<AIResponse> prompt(
     String prompt, {
     File? pipedContent,
     bool contiune = true,

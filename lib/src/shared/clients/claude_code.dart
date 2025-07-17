@@ -32,7 +32,6 @@ class ClaudeCode extends LLMProvider {
           'Piped content file does not exist: ${pipedContent.path}',
         );
       }
-
       command = [
         'bash',
         '-c',

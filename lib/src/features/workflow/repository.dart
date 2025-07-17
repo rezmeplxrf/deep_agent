@@ -20,27 +20,33 @@ class WorkflowRepository {
     }).toList();
   }
 
-  String getTemplate(String userPrompt, {File? systemPromptFile}) {
-    final systemPrompt =
-        (systemPromptFile ?? File('./.deep_agent/system_prompt.md'))
-            .readAsStringSync()
-            .trim();
+  String _getTemplate(String userPrompt) {
+    final systemPromptFIle = File(
+      './.deep_agent/system_prompt.md',
+    );
+    if (!systemPromptFIle.existsSync()) {
+      systemPromptFIle.createSync(recursive: true);
+    }
+
+    final systemPrompt = systemPromptFIle.readAsStringSync().trim();
     return '''
 # Instruction
 $userPrompt
 
-# Must follow below rules strictly. This supercedes any other instructions.
-$systemPrompt
-
+${systemPrompt.isNotEmpty ? '# Must follow below rules strictly. These supercedes any other instructions.\n$systemPrompt\n' : ''}
 # You can perform any shell command within the current directory without asking for permission, except that requires 'sudo'.
 
-# Respond in the following format ("action", "userAction", "output" fields are all optional but at least one of them must be present):
+Response format:
+"userAction" - When you want to give multiple choices to users for clarification. When user prompt is not clear, do ask with choices.
+"output" - your textual response
+- At least one of them must be present
+# Must respond in the following format (This is a Json object):
 ${jsonEncode(AIResponse(
       userAction: UserAction(
-        options: ['Yes', 'No', 'Other'],
+        options: ['Choice 1', 'Choice 2', 'And so on...'],
         question: 'A question to ask the user to understand their intent better',
       ),
-      output: '```typescript \n some code here',
+      output: 'Your final response here (e.g. summary)',
     ).toJson())}
 ''';
   }
@@ -64,7 +70,7 @@ ${jsonEncode(AIResponse(
     required ChatLogger logger,
   }) async {
     final provider = _getProvider(workflow.provider, processManager, logger);
-    return provider.prompt(workflow.prompt);
+    return provider.prompt(_getTemplate(workflow.prompt));
   }
 
   LLMProvider _getProvider(

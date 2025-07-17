@@ -21,6 +21,12 @@ class WorkflowService {
     final workFlows = await _repository.loadWorkflows(
       workflowFile ?? File(_defaultWorkflowPath),
     );
+    if (workFlows.isEmpty) {
+      _chatLogger.logger.err(
+        'No workflows found in ${workflowFile?.path ?? _defaultWorkflowPath}',
+      );
+      return [];
+    }
     final results = <WorkflowResult>[];
 
     AIResponse? previousResponse;

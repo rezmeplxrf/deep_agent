@@ -8,6 +8,17 @@ import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
+void main() {
+  WorkflowRepository().writeWorkflow(
+    WorkflowStep(
+      name: 'test1',
+      provider: Provider.claudeCode,
+      prompt: 'You are a helpful coding assistant.',
+    ),
+    File('.deep_agent/workflows.jsonl'),
+  );
+}
+
 class WorkflowRepository {
   Future<List<WorkflowStep>> loadWorkflows(File workflowFile) async {
     if (!workflowFile.existsSync()) {
@@ -20,21 +31,26 @@ class WorkflowRepository {
     }).toList();
   }
 
-  String _getTemplate(String userPrompt) {
-    final systemPromptFIle = File(
-      './.deep_agent/system_prompt.md',
-    );
-    if (!systemPromptFIle.existsSync()) {
-      systemPromptFIle.createSync(recursive: true);
-    }
+  void writeWorkflow(
+    WorkflowStep workflow,
+    File workflowFile,
+  ) {
+    final json = jsonEncode(workflow.toJson());
+    workflowFile.writeAsStringSync('$json\n', mode: FileMode.append);
+  }
 
-    final systemPrompt = systemPromptFIle.readAsStringSync().trim();
+  String _getTemplate({
+    required String userPrompt,
+    required String systemPrompt,
+  }) {
     return '''
-# Instruction
+# User Prompt Start
 $userPrompt
+# User Prompt End
 
 ${systemPrompt.isNotEmpty ? '# Must follow below rules strictly. These supercedes any other instructions.\n$systemPrompt\n' : ''}
 # You can perform any shell command within the current directory without asking for permission, except that requires 'sudo'.
+# If the user prompt is about coding, you should directly modify the relevant files using shell commands unless you want to ask the user for clarification.
 
 Response format:
 "userAction" - When you want to give multiple choices to users for clarification. When user prompt is not clear, do ask with choices.
@@ -72,7 +88,12 @@ ${jsonEncode(AIResponse(
   }) async {
     final provider = _getProvider(workflow.provider, processManager, logger);
     if (initialPrompt) {
-      return provider.prompt(_getTemplate(workflow.prompt));
+      return provider.prompt(
+        _getTemplate(
+          userPrompt: workflow.input ?? '',
+          systemPrompt: workflow.prompt,
+        ),
+      );
     } else {
       return provider.prompt(workflow.prompt);
     }

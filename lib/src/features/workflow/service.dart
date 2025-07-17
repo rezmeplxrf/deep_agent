@@ -2,20 +2,14 @@ import 'dart:io';
 
 import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/features/workflow/repository.dart';
-import 'package:deep_agent/src/shared/clients/claude_code.dart';
-import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
-import 'package:mason_logger/mason_logger.dart';
 import 'package:process/process.dart';
 
 class WorkflowService {
-  final ProcessManager processManager = const LocalProcessManager();
-  final _logger = ChatLogger();
+  final ProcessManager _processManager = const LocalProcessManager();
+  final _chatLogger = ChatLogger();
   final _repository = WorkflowRepository();
   final _defaultWorkflowPath = './.deep_agent/workflows.jsonl';
-  final logger = Logger(
-    level: Level.verbose,
-  );
 
   // 1. Prompt AI with userPrompt, if userAction is not null, ask the user for input
   // 2. If userAction is null and AIResponse is not null, pass the AIResponse to the next workflow
@@ -36,13 +30,17 @@ class WorkflowService {
         input: (i == 0) ? userPrompt : previousResponse?.output,
       );
 
-      logger.info('Running workflow step: ${workflow.name}');
-      final intialResponse = await promptAI(workflow);
+      _chatLogger.logger.info('Running workflow step: ${workflow.name}');
+      final intialResponse = await _repository.promptAI(
+        workflow: workflow,
+        processManager: _processManager,
+        logger: _chatLogger,
+      );
       if (intialResponse.output != null) {
-        logger.info(intialResponse.output);
+        _chatLogger.logger.info(intialResponse.output);
       }
       if (intialResponse.error != null) {
-        logger.err(intialResponse.error);
+        _chatLogger.logger.err(intialResponse.error);
         results.add(
           WorkflowResult(
             success: false,
@@ -56,18 +54,23 @@ class WorkflowService {
       var response = intialResponse;
 
       while (response.userAction != null) {
-        final userResponse = promptUser(response.userAction!);
-        response = await pipeUserInput(
-          userResponse.join(', '),
-          workflow.provider,
+        final userResponse = _repository.promptUser(
+          input: response.userAction!,
+          chatLogger: _chatLogger,
+        );
+        response = await _repository.pipeUserInput(
+          prompt: userResponse.join(', '),
+          provider: workflow.provider,
+          processManager: _processManager,
+          logger: _chatLogger,
         );
         if (response.error != null) {
-          logger.err(response.error);
+          _chatLogger.logger.err(response.error);
           break;
         }
       }
       if (response.output != null) {
-        logger.success('${response.output}');
+        _chatLogger.logger.success('${response.output}');
         results.add(
           WorkflowResult(
             response: response,
@@ -89,40 +92,5 @@ class WorkflowService {
       }
     }
     return results;
-  }
-
-  List<String> promptUser(UserAction input) {
-    return logger.chooseAny(
-      input.question,
-      choices: input.options,
-      defaultValues: [
-        "I don't know. Please choose what you think is the best",
-      ],
-    );
-  }
-
-  Future<AIResponse> promptAI(WorkflowStep workflow) async {
-    final provider = _getProvider(workflow.provider);
-    return provider.prompt(workflow.prompt);
-  }
-
-  LLMProvider _getProvider(Provider provider) {
-    late final LLMProvider llmProvider;
-    switch (provider) {
-      case Provider.claudeCode:
-        llmProvider = ClaudeCode(
-          processManager: processManager,
-          logger: _logger,
-        );
-
-      default:
-        throw ArgumentError('Unknown provider: $provider');
-    }
-    return llmProvider;
-  }
-
-  Future<AIResponse> pipeUserInput(String prompt, Provider provider) async {
-    final llmProvider = _getProvider(provider);
-    return llmProvider.prompt(prompt);
   }
 }

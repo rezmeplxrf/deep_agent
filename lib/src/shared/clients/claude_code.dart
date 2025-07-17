@@ -35,7 +35,7 @@ class ClaudeCode extends LLMProvider {
       command = [
         'bash',
         '-c',
-        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --output-format json --dangerously-skip-permissions'",
+        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --dangerously-skip-permissions'",
       ];
       logger.log('${pipedContent.path} | $escapedPrompt', Role.user);
     } else {
@@ -44,7 +44,6 @@ class ClaudeCode extends LLMProvider {
         if (contiune) '-c',
         '-p',
         escapedPrompt,
-        '--output-format json',
         '--dangerously-skip-permissions',
       ];
       logger.log(escapedPrompt, Role.user);

@@ -5,6 +5,14 @@ import 'package:deep_agent/src/features/workflow/repository.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
+void main() async {
+  final service = WorkflowService();
+  final results = await service.run(
+    'Write a easy level leet code question in `./test/` directory with the efficient solution.',
+  );
+  print(results);
+}
+
 class WorkflowService {
   final ProcessManager _processManager = const LocalProcessManager();
   final _chatLogger = ChatLogger();

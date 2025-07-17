@@ -8,16 +8,16 @@ import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
-void main() {
-  WorkflowRepository().writeWorkflow(
-    WorkflowStep(
-      name: 'test1',
-      provider: Provider.claudeCode,
-      prompt: 'You are a helpful coding assistant.',
-    ),
-    File('.deep_agent/workflows.jsonl'),
-  );
-}
+// void main() {
+//   WorkflowRepository().writeWorkflow(
+//     WorkflowStep(
+//       name: 'test1',
+//       provider: Provider.claudeCode,
+//       prompt: 'You are a helpful coding assistant.',
+//     ),
+//     File('.deep_agent/workflows.jsonl'),
+//   );
+// }
 
 class WorkflowRepository {
   Future<List<WorkflowStep>> loadWorkflows(File workflowFile) async {

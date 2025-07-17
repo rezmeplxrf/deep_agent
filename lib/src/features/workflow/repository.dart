@@ -68,9 +68,14 @@ ${jsonEncode(AIResponse(
     required WorkflowStep workflow,
     required ProcessManager processManager,
     required ChatLogger logger,
+    bool initialPrompt = false,
   }) async {
     final provider = _getProvider(workflow.provider, processManager, logger);
-    return provider.prompt(_getTemplate(workflow.prompt));
+    if (initialPrompt) {
+      return provider.prompt(_getTemplate(workflow.prompt));
+    } else {
+      return provider.prompt(workflow.prompt);
+    }
   }
 
   LLMProvider _getProvider(

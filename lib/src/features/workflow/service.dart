@@ -35,6 +35,7 @@ class WorkflowService {
         workflow: workflow,
         processManager: _processManager,
         logger: _chatLogger,
+        initialPrompt: true,
       );
       if (intialResponse.output != null) {
         _chatLogger.logger.info(intialResponse.output);

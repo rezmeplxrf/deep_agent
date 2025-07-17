@@ -25,14 +25,16 @@ class WorkflowStep {
     required this.name,
     required this.provider,
     required this.prompt,
+    this.input,
   });
   final String name;
   final Provider provider;
   final String prompt;
+  final String? input;
 
   @override
   String toString() {
-    return 'WorkflowStep(name: $name, provider: $provider, prompt: $prompt)';
+    return 'WorkflowStep(name: $name, provider: $provider, prompt: $prompt, input: $input)';
   }
 
   Map<String, dynamic> toJson() {
@@ -40,6 +42,7 @@ class WorkflowStep {
       'name': name,
       'provider': provider.name,
       'prompt': prompt,
+      if (input != null) 'input': input,
     };
   }
 
@@ -53,38 +56,47 @@ class WorkflowStep {
         ),
       ),
       prompt: json['prompt'] as String,
+      input: json['input'] as String?,
+    );
+  }
+  // copyWith
+  WorkflowStep copyWith({
+    String? name,
+    Provider? provider,
+    String? prompt,
+    String? input,
+  }) {
+    return WorkflowStep(
+      name: name ?? this.name,
+      provider: provider ?? this.provider,
+      prompt: prompt ?? this.prompt,
+      input: input ?? this.input,
     );
   }
 }
 
 class AIResponse {
   AIResponse({
-    this.action,
     this.userAction,
     this.output,
     this.error,
   }) {
     // if all fields are null, put error message
-    if (action == null &&
-        userAction == null &&
-        output == null &&
-        error == null) {
+    if (userAction == null && output == null && error == null) {
       error = 'No response from AI';
     }
   }
-  final String? action;
   final UserAction? userAction;
   final String? output;
   String? error;
 
   @override
   String toString() {
-    return 'AIResponse(action: $action, userAction: $userAction, output: $output, error: $error)';
+    return 'AIResponse(userAction: $userAction, output: $output, error: $error)';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (action != null) 'action': action,
       if (userAction != null) 'userAction': userAction?.toJson(),
       if (output != null) 'output': output,
       if (error != null) 'error': error,
@@ -93,7 +105,6 @@ class AIResponse {
 
   factory AIResponse.fromJson(Map<String, dynamic> json) {
     return AIResponse(
-      action: json['action'] as String?,
       userAction: json['userAction'] != null
           ? UserAction.fromJson(json['userAction'] as Map<String, dynamic>)
           : null,
@@ -123,7 +134,7 @@ class ShellCommandResult {
   Map<String, dynamic> toJson() {
     return {
       'stdout': stdout,
-      'stderr': stderr,
+      if (stderr != null) 'stderr': stderr,
       'exitCode': exitCode,
       'pid': pid,
     };
@@ -169,11 +180,11 @@ class UserAction {
 
 class WorkflowResult {
   WorkflowResult({
-    required this.response,
     required this.success,
+    this.response,
     this.error,
   });
-  final AIResponse response;
+  final AIResponse? response;
   final bool success;
   final String? error;
 
@@ -184,15 +195,17 @@ class WorkflowResult {
 
   Map<String, dynamic> toJson() {
     return {
-      'response': response.toJson(),
+      if (response != null) 'response': response?.toJson(),
       'success': success,
-      'error': error,
+      if (error != null) 'error': error,
     };
   }
 
   factory WorkflowResult.fromJson(Map<String, dynamic> json) {
     return WorkflowResult(
-      response: AIResponse.fromJson(json['response'] as Map<String, dynamic>),
+      response: json['response'] != null
+          ? AIResponse.fromJson(json['response'] as Map<String, dynamic>)
+          : null,
       success: json['success'] as bool,
       error: json['error'] as String?,
     );

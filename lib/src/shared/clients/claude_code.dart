@@ -6,7 +6,6 @@ import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:deep_agent/src/shared/utils.dart';
-import 'package:process/process.dart';
 
 class ClaudeCode extends LLMProvider {
   /// A Claude Code LLM provider implementation.
@@ -37,7 +36,7 @@ class ClaudeCode extends LLMProvider {
       command = [
         'bash',
         '-c',
-        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --output-format json'",
+        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --output-format json --dangerously-skip-permissions'",
       ];
       logger.log('${pipedContent.path} | $escapedPrompt', Role.user);
     } else {
@@ -47,6 +46,7 @@ class ClaudeCode extends LLMProvider {
         '-p',
         escapedPrompt,
         '--output-format json',
+        '--dangerously-skip-permissions',
       ];
       logger.log(escapedPrompt, Role.user);
     }
@@ -75,16 +75,16 @@ class ClaudeCode extends LLMProvider {
   }
 }
 
-void main() async {
-  const processManager = LocalProcessManager();
-  final claudeCode = ClaudeCode(
-    processManager: processManager,
-    logger: ChatLogger(),
-  );
+// void main() async {
+//   const processManager = LocalProcessManager();
+//   final claudeCode = ClaudeCode(
+//     processManager: processManager,
+//     logger: ChatLogger(),
+//   );
 
-  final response = await claudeCode.prompt(
-    'return the exact conversation so far in markdown format'
-    // pipedContent: File('./.deep_agent/log.md'),
-  );
-  print('Response: $response');
-}
+//   final response = await claudeCode.prompt(
+//     'return the exact conversation so far in markdown format',
+//     // pipedContent: File('./.deep_agent/log.md'),
+//   );
+//   print('Response: $response');
+// }

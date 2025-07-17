@@ -180,29 +180,33 @@ class UserAction {
 
 class WorkflowResult {
   WorkflowResult({
+    required this.workflowName,
     required this.success,
     this.response,
     this.error,
   });
   final AIResponse? response;
+  final String workflowName;
   final bool success;
   final String? error;
 
   @override
   String toString() {
-    return 'WorkflowResult(response: $response, success: $success, error: $error)';
+    return 'WorkflowResult(workflowName: $workflowName, response: $response, success: $success, error: $error)';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (response != null) 'response': response?.toJson(),
+      'workflowName': workflowName,
       'success': success,
+      if (response != null) 'response': response?.toJson(),
       if (error != null) 'error': error,
     };
   }
 
   factory WorkflowResult.fromJson(Map<String, dynamic> json) {
     return WorkflowResult(
+      workflowName: json['workflowName'] as String,
       response: json['response'] != null
           ? AIResponse.fromJson(json['response'] as Map<String, dynamic>)
           : null,

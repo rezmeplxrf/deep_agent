@@ -37,22 +37,23 @@ class WorkflowService {
       );
 
       logger.info('Running workflow step: ${workflow.name}');
-      final response1 = await prompt(workflow);
-      if (response1.output != null) {
-        logger.info(response1.output);
+      final intialResponse = await promptAI(workflow);
+      if (intialResponse.output != null) {
+        logger.info(intialResponse.output);
       }
-      if (response1.error != null) {
-        logger.err(response1.error);
+      if (intialResponse.error != null) {
+        logger.err(intialResponse.error);
         results.add(
           WorkflowResult(
             success: false,
-            error: response1.error,
-            response: response1,
+            error: intialResponse.error,
+            response: intialResponse,
+            workflowName: workflow.name,
           ),
         );
         break;
       }
-      var response = response1;
+      var response = intialResponse;
 
       while (response.userAction != null) {
         final userResponse = promptUser(response.userAction!);
@@ -62,27 +63,26 @@ class WorkflowService {
         );
         if (response.error != null) {
           logger.err(response.error);
-          results.add(
-            WorkflowResult(
-              success: false,
-              error: response.error,
-              response: response,
-            ),
-          );
           break;
         }
       }
       if (response.output != null) {
         logger.success('${response.output}');
-        results.add(WorkflowResult(response: response, success: true));
+        results.add(
+          WorkflowResult(
+            response: response,
+            success: true,
+            workflowName: workflow.name,
+          ),
+        );
         previousResponse = response;
       } else {
-        logger.err('No output from workflow step: ${workflow.name}');
         results.add(
           WorkflowResult(
             success: false,
-            error: 'No output from workflow step: ${workflow.name}',
+            error: response.error,
             response: response,
+            workflowName: workflow.name,
           ),
         );
         break;
@@ -101,7 +101,7 @@ class WorkflowService {
     );
   }
 
-  Future<AIResponse> prompt(WorkflowStep workflow) async {
+  Future<AIResponse> promptAI(WorkflowStep workflow) async {
     final provider = _getProvider(workflow.provider);
     return provider.prompt(workflow.prompt);
   }
@@ -124,25 +124,5 @@ class WorkflowService {
   Future<AIResponse> pipeUserInput(String prompt, Provider provider) async {
     final llmProvider = _getProvider(provider);
     return llmProvider.prompt(prompt);
-  }
-
-  Future<AIResponse> pipeActionResult(
-    ShellCommandResult result,
-    WorkflowStep workflow,
-  ) async {
-    late final LLMProvider provider;
-    switch (workflow.provider) {
-      case Provider.claudeCode:
-        provider = ClaudeCode(
-          processManager: processManager,
-          logger: _logger,
-        );
-
-      default:
-        throw ArgumentError('Unknown provider: ${workflow.provider}');
-    }
-    return provider.prompt(
-      '''Terminal output: ${result.stderr != null ? result.stdout : result.stderr}''',
-    );
   }
 }

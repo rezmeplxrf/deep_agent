@@ -8,7 +8,7 @@ import 'package:process/process.dart';
 void main() async {
   final service = WorkflowService();
   final results = await service.run(
-    'Write a easy level leet code question in `./test/` directory with the efficient solution.',
+    'Write a medium level leet code question in `./test/` directory with the efficient solution. - except to the two-sum question',
   );
   print(results);
 }

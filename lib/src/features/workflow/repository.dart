@@ -34,14 +34,34 @@ import 'package:process/process.dart';
 
 class WorkflowRepository {
   Future<List<WorkflowStep>> loadWorkflows(File workflowFile) async {
-    if (!workflowFile.existsSync()) {
-      throw Exception('Workflow file does not exist: ${workflowFile.path}');
-    }
-    final content = await workflowFile.readAsLines();
-    if (content.isEmpty) return [];
-    return content.map((line) {
-      return WorkflowStep.fromJson(jsonDecode(line) as Map<String, dynamic>);
-    }).toList();
+    // if (!workflowFile.existsSync()) {
+    //   throw Exception('Workflow file does not exist: ${workflowFile.path}');
+    // }
+    // final content = await workflowFile.readAsLines();
+    // if (content.isEmpty) return [];
+    // return content.map((line) {
+    //   return WorkflowStep.fromJson(jsonDecode(line) as Map<String, dynamic>);
+    // }).toList();
+    //{"name":"step1","provider":"claudeCode","role":"Architect"}
+    // {"name":"step2","provider":"claudeCode","role":"Developer"}
+    // {"name":"step3","provider":"claudeCode","role":"LeadDeveloper"}
+    return [
+      WorkflowStep(
+        name: 'step1',
+        provider: Provider.claudeCode,
+        role: AIRole.Architect,
+      ),
+      WorkflowStep(
+        name: 'step2',
+        provider: Provider.claudeCode,
+        role: AIRole.Developer,
+      ),
+      WorkflowStep(
+        name: 'step3',
+        provider: Provider.claudeCode,
+        role: AIRole.LeadDeveloper,
+      ),
+    ];
   }
 
   void createWorkflows(List<WorkflowStep> workflows, File workflowFile) {

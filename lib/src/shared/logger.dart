@@ -12,7 +12,11 @@ enum Role {
 class ChatLogger {
   /// Creates a [ChatLogger] with an optional [filePath].
   ChatLogger({String? filePath})
-    : _logFile = (filePath != null) ? File(filePath) : File(_defaultLogFile) {
+    : _logFile = (filePath != null)
+          ? File(filePath)
+          : File(
+              _defaultLogFile,
+            ) {
     _init();
   }
 

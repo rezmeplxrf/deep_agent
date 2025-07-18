@@ -4,11 +4,10 @@ import 'package:mason_logger/mason_logger.dart';
 
 class PromptCommand extends Command<int> {
   PromptCommand({required Logger logger}) : _logger = logger {
-    argParser.addFlag(
+    argParser.addOption(
       'prompt',
       abbr: 'p',
       help: 'Prompts the AI with a given task',
-      negatable: false,
     );
   }
 

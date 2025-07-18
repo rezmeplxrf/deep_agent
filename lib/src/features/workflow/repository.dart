@@ -8,18 +8,28 @@ import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
-void main() {
-  WorkflowRepository().createWorkflows(
-    [
-      WorkflowStep(
-        name: 'step1',
-        provider: Provider.claudeCode,
-        role: AIRole.Architect,
-      ),
-    ],
-    File('.deep_agent/workflows.jsonl'),
-  );
-}
+// void main() {
+//   WorkflowRepository().createWorkflows(
+//     [
+//       WorkflowStep(
+//         name: 'step1',
+//         provider: Provider.claudeCode,
+//         role: AIRole.Architect,
+//       ),
+//       WorkflowStep(
+//         name: 'step2',
+//         provider: Provider.claudeCode,
+//         role: AIRole.Developer,
+//       ),
+//       WorkflowStep(
+//         name: 'step3',
+//         provider: Provider.claudeCode,
+//         role: AIRole.LeadDeveloper,
+//       ),
+//     ],
+//     File('.deep_agent/workflows.jsonl'),
+//   );
+// }
 
 class WorkflowRepository {
   Future<List<WorkflowStep>> loadWorkflows(File workflowFile) async {

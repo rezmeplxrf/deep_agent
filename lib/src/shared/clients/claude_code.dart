@@ -21,7 +21,7 @@ class ClaudeCode extends LLMProvider {
   Future<AIResponse> prompt(
     String prompt, {
     File? pipedContent,
-    bool contiune = true,
+    bool shouldContinue = true,
   }) async {
     late final List<String> command;
     final escapedPrompt = Utils.escapeShellCommand(prompt);
@@ -35,13 +35,13 @@ class ClaudeCode extends LLMProvider {
       command = [
         'bash',
         '-c',
-        "cat '${pipedContent.path}' | claude ${contiune ? '-c' : ''} -p '$escapedPrompt --dangerously-skip-permissions'",
+        "cat '${pipedContent.path}' | claude ${shouldContinue ? '-c' : ''} -p '$escapedPrompt --dangerously-skip-permissions'",
       ];
       logger.log('${pipedContent.path} | $escapedPrompt', Role.user);
     } else {
       command = [
         'claude',
-        if (contiune) '-c',
+        if (shouldContinue) '-c',
         '-p',
         escapedPrompt,
         '--dangerously-skip-permissions',

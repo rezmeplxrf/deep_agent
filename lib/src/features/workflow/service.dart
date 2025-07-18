@@ -49,7 +49,7 @@ class WorkflowService {
         workflow: workflow,
         processManager: _processManager,
         logger: _chatLogger,
-        initialPrompt: true,
+        shouldContinue: false,
         role: workflow.role,
       );
       if (intialResponse.output != null) {
@@ -69,9 +69,9 @@ class WorkflowService {
       }
       var response = intialResponse;
 
-      while (response.userAction != null) {
+      while (workflow.role == AIRole.Architect && response.askUser != null) {
         final userResponse = _repository.promptUser(
-          input: response.userAction!,
+          input: response.askUser!,
           chatLogger: _chatLogger,
         );
         response = await _repository.pipeUserInput(
@@ -85,6 +85,7 @@ class WorkflowService {
           break;
         }
       }
+
       if (response.output != null) {
         _chatLogger.logger.success('${response.output}');
         results.add(

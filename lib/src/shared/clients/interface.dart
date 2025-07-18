@@ -23,6 +23,6 @@ abstract class LLMProvider {
   Future<AIResponse> prompt(
     String prompt, {
     File? pipedContent,
-    bool contiune = true,
+    bool shouldContinue = true,
   });
 }

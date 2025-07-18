@@ -53,42 +53,81 @@ class WorkflowRepository {
 Your are a Technical Architect. You are responsible for designing the architecture of the system based on the user requirements.
 You will write the architecture design document based on the user requirements.
 If user's request is not clear, ask detailed questions with multiple choices until you get a clear understanding of the requirements.
-Once you have a clear understanding, you will write the architecture design document in "./.deep_agent/specs/[feature_name].md" file for a feature or "./.deep_agent/specs/project.md" file for a project-level design.
+Once you have a clear understanding, you will write the architecture design document in "./.deep_agent/specs/[feature_name].md" file for a feature or "./.deep_agent/specs/project.md" file for a project-level design by running shell command to create/modify the files.
+
+You can ask the user using the following format (JSON):
+
+${jsonEncode(AIResponse(
+              askUser: UserPrompt(
+                options: ['Choice 1', 'Choice 2', 'And so on...'],
+                question: 'A question to ask the user to understand their intent better',
+              ),
+            ).toJson())}
+
+Finally, after completing your task, you must write the detailed instruction to the developer to implement the design.
+You must respond in the following format (JSON) to instruct the developer
+
+${jsonEncode(AIResponse(
+              output: 'Your instruction to the developer here',
+            ).toJson())}
 
 ### USER REQUEST
 $userPrompt
 ### USER REQUEST END
 ''';
 
-      default:
+      case AIRole.LeadDeveloper:
+        prompt =
+            '''
+You are a Lead Developer. You are responsible for reviewing the given code for any bugs or potential issues and ensuring the code meets the architecture design.
+You can find the architecture design document in "./.deep_agent/specs/[feature_name].md" file. 
+And also find the project-level design in "./.deep_agent/specs/project.md" file.
+Based on the given report/git diff, you will review the code and make any necessary changes yourself by running shell commands directly.
+After making any changes, make sure to check linter and run tests to ensure the code is working as expected.
+
+You must review the code using git diff and any code mentioned in theDeveloper's report.
+After reviewing the code, you must fix/modify any issues you find by running shell commands directly in the current directory.
+
+### DEVELOPER REPORT
+$userPrompt
+### DEVELOPER REPORT END
+
+Finally, after completing your task, you must write the summary to the Product Owner to finalize the implementation.
+You must respond in the following format (JSON) for the Product Owner:
+
+${jsonEncode(AIResponse(
+              output: 'Your summary here',
+            ).toJson())}
+''';
+
+      case AIRole.Developer:
+        prompt =
+            '''
+You are an Experienced Developer. You are responsible for implementing the architecture design in code.
+You will write the code based on the architecture design document and instructions provided by the Architect.
+You can find the architecture design document in "./.deep_agent/specs/[feature_name].md" file.
+You can also find the project-level design in "./.deep_agent/specs/project.md" file
+You can directly create/modify the files by running shell commands in the current directory.
+
+### ARCHITECT INSTRUCTION
+$userPrompt
+### ARCHITECT INSTRUCTION END
+
+Finally, after completing your task, you must write the report with the file path you've created/modified to the Lead Developer to reivew your code
+You must respond in the following format (JSON) for the Lead Developer:
+
+${jsonEncode(AIResponse(
+              output: 'Your report here',
+            ).toJson())}
+
+''';
     }
 
-    return '''
-$prompt
-
-${systemPrompt.isNotEmpty ? '# Must follow below rules strictly. These supercedes user requests.\n$systemPrompt\n' : ''}
-- Before implementing any feature / modification, you must read the existing specification in "./.deep_agent/specs/[feature_name].md" file.
-- You can perform any shell command within the current directory without asking for permission, except that requires 'sudo'.
-- If the user prompt is about coding, you should directly modify the relevant files using shell commands unless you want to ask the user for clarification.
-
-# You must repond in the following format to ensure the next role can understand your response
-## Response format:
-"userAction" - When you want to give multiple choices to users for clarification. When user prompt is not clear, do ask with choices.
-"output" - Your report/summary/instruction for the next role. Must be concise and to the point.
-- At least one of them must be present
-# Must respond in the following format (This is a Json object):
-${jsonEncode(AIResponse(
-      userAction: UserAction(
-        options: ['Choice 1', 'Choice 2', 'And so on...'],
-        question: 'A question to ask the user to understand their intent better',
-      ),
-      output: 'Your report/summary/explanation to the next role',
-    ).toJson())}
-''';
+    return prompt;
   }
 
   List<String> promptUser({
-    required UserAction input,
+    required UserPrompt input,
     required ChatLogger chatLogger,
   }) {
     return chatLogger.logger.chooseAny(
@@ -105,11 +144,12 @@ ${jsonEncode(AIResponse(
     required ProcessManager processManager,
     required ChatLogger logger,
     required AIRole role,
-    bool initialPrompt = false,
+    bool shouldContinue = true,
   }) async {
     final provider = _getProvider(workflow.provider, processManager, logger);
-    if (initialPrompt) {
+    if (shouldContinue) {
       return provider.prompt(
+        shouldContinue: shouldContinue,
         _getTemplate(
           role: role,
           userPrompt: workflow.input ?? '',

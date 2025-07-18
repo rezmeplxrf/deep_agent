@@ -2,7 +2,7 @@
 
 enum Provider { claudeCode, geminiCli, llmApi }
 
-enum AIRole { Architect, Planner, Developer, Reviewer }
+enum AIRole { Architect, Developer, LeadDeveloper }
 
 Provider getProvider(String provider) {
   switch (provider.toLowerCase()) {
@@ -88,81 +88,49 @@ class WorkflowStep {
 
 class AIResponse {
   AIResponse({
-    this.userAction,
+    this.askUser,
     this.output,
+    this.askAI,
     this.error,
   }) {
     // if all fields are null, put error message
-    if (userAction == null && output == null && error == null) {
+    if (askUser == null && output == null && error == null && askAI == null) {
       error = 'No response from AI';
     }
   }
-  final UserAction? userAction;
+  final UserPrompt? askUser;
+  final String? askAI;
   final String? output;
   String? error;
 
   @override
   String toString() {
-    return 'AIResponse(userAction: $userAction, output: $output, error: $error)';
+    return 'AIResponse(userAction: $askUser, output: $output, error: $error, askAI: $askAI)';
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (userAction != null) 'userAction': userAction?.toJson(),
+      if (askUser != null) 'userAction': askUser?.toJson(),
       if (output != null) 'output': output,
       if (error != null) 'error': error,
+      if (askAI != null) 'askAI': askAI,
     };
   }
 
   factory AIResponse.fromJson(Map<String, dynamic> json) {
     return AIResponse(
-      userAction: json['userAction'] != null
-          ? UserAction.fromJson(json['userAction'] as Map<String, dynamic>)
+      askUser: json['askUser'] != null
+          ? UserPrompt.fromJson(json['askUser'] as Map<String, dynamic>)
           : null,
       output: json['output'] as String?,
+      error: json['error'] as String?,
+      askAI: json['askAI'] as String?,
     );
   }
 }
 
-/// Shell command result
-class ShellCommandResult {
-  ShellCommandResult(
-    this.pid,
-    this.exitCode,
-    this.stdout,
-    this.stderr,
-  );
-  final int pid;
-  final int exitCode;
-  final String stdout;
-  final String? stderr;
-
-  @override
-  String toString() {
-    return 'ShellCommandResult(pid: $pid, exitCode: $exitCode, stdout: $stdout, stderr: $stderr)';
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'stdout': stdout,
-      if (stderr != null) 'stderr': stderr,
-      'exitCode': exitCode,
-      'pid': pid,
-    };
-  }
-
-  factory ShellCommandResult.fromJson(Map<String, dynamic> json) {
-    return ShellCommandResult(
-      json['pid'] as int,
-      json['exitCode'] as int,
-      json['stdout'] as String,
-      json['stderr'] as String?,
-    );
-  }
-}
-
-class UserAction {
-  UserAction({
+class UserPrompt {
+  UserPrompt({
     required this.options,
     required this.question,
   });
@@ -171,7 +139,7 @@ class UserAction {
 
   @override
   String toString() {
-    return 'UserAction(options: $options, question: $question)';
+    return 'UserPrompt(options: $options, question: $question)';
   }
 
   Map<String, dynamic> toJson() {
@@ -181,8 +149,8 @@ class UserAction {
     };
   }
 
-  factory UserAction.fromJson(Map<String, dynamic> json) {
-    return UserAction(
+  factory UserPrompt.fromJson(Map<String, dynamic> json) {
+    return UserPrompt(
       options: List<String>.from(json['options'] as List),
       question: json['question'] as String,
     );

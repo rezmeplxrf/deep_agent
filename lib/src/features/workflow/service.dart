@@ -8,7 +8,7 @@ import 'package:process/process.dart';
 void main() async {
   final service = WorkflowService();
   final results = await service.run(
-    'Write a medium level leet code question in `./test/` directory with the efficient solution. - except to the two-sum question',
+    'Write a medium level leet code question in `./test/[question_name].dart` directory with the efficient solution. - except to the two-sum question',
   );
   print(results);
 }
@@ -50,6 +50,7 @@ class WorkflowService {
         processManager: _processManager,
         logger: _chatLogger,
         initialPrompt: true,
+        role: workflow.role,
       );
       if (intialResponse.output != null) {
         _chatLogger.logger.info(intialResponse.output);

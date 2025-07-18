@@ -1,6 +1,8 @@
-// ignore_for_file: sort_constructors_first
+// ignore_for_file: sort_constructors_first, constant_identifier_names
 
 enum Provider { claudeCode, geminiCli, llmApi }
+
+enum AIRole { Architect, Planner, Developer, Reviewer }
 
 Provider getProvider(String provider) {
   switch (provider.toLowerCase()) {
@@ -25,16 +27,18 @@ class WorkflowStep {
     required this.name,
     required this.provider,
     required this.prompt,
+    required this.role,
     this.input,
   });
   final String name;
   final Provider provider;
   final String prompt;
   final String? input;
+  final AIRole role;
 
   @override
   String toString() {
-    return 'WorkflowStep(name: $name, provider: $provider, prompt: $prompt, input: $input)';
+    return 'WorkflowStep(name: $name, provider: $provider, prompt: $prompt, input: $input, role: $role)';
   }
 
   Map<String, dynamic> toJson() {
@@ -55,6 +59,12 @@ class WorkflowStep {
           'Unknown provider: ${json['provider']}',
         ),
       ),
+      role: AIRole.values.firstWhere(
+        (e) => e.name == json['role'],
+        orElse: () => throw ArgumentError(
+          'Unknown role: ${json['role']}',
+        ),
+      ),
       prompt: json['prompt'] as String,
       input: json['input'] as String?,
     );
@@ -71,6 +81,7 @@ class WorkflowStep {
       provider: provider ?? this.provider,
       prompt: prompt ?? this.prompt,
       input: input ?? this.input,
+      role: role,
     );
   }
 }

@@ -21,7 +21,7 @@ class PromptCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final userPrompt = argResults?['prompt'] as String?;
+    final userPrompt = (argResults?['prompt'] as String?)?.trim();
     if (userPrompt == null || userPrompt.isEmpty) {
       _logger.err('Please provide a prompt using --prompt or -p flag.');
       return ExitCode.usage.code;

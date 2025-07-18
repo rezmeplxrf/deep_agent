@@ -35,6 +35,7 @@ class WorkflowService {
       logger.err(
         'No workflows found in ${workflowFile?.path ?? _defaultWorkflowPath}',
       );
+      File(_defaultWorkflowPath).createSync(recursive: true);
       return [];
     }
     final results = <WorkflowResult>[];

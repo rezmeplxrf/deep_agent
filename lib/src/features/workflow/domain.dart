@@ -64,7 +64,7 @@ class WorkflowStep {
         ),
       ),
 
-      input: json['input'] as String,
+      input: json['input'] as String?,
     );
   }
   // copyWith

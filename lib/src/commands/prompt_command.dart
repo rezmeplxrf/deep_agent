@@ -30,6 +30,7 @@ class PromptCommand extends Command<int> {
     final results = await service.run(userPrompt, logger: _logger);
     if (results.isEmpty) {
       _logger.warn('No workflows were executed.');
+      return ExitCode.noInput.code;
     }
     _logger.info('Workflow results:');
 

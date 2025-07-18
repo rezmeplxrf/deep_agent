@@ -26,26 +26,24 @@ class WorkflowStep {
   WorkflowStep({
     required this.name,
     required this.provider,
-    required this.prompt,
     required this.role,
     this.input,
   });
   final String name;
   final Provider provider;
-  final String prompt;
   final String? input;
   final AIRole role;
 
   @override
   String toString() {
-    return 'WorkflowStep(name: $name, provider: $provider, prompt: $prompt, input: $input, role: $role)';
+    return 'WorkflowStep(name: $name, provider: $provider, input: $input, role: $role)';
   }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'provider': provider.name,
-      'prompt': prompt,
+      'role': role.name,
       if (input != null) 'input': input,
     };
   }
@@ -65,21 +63,20 @@ class WorkflowStep {
           'Unknown role: ${json['role']}',
         ),
       ),
-      prompt: json['prompt'] as String,
-      input: json['input'] as String?,
+
+      input: json['input'] as String,
     );
   }
   // copyWith
   WorkflowStep copyWith({
     String? name,
     Provider? provider,
-    String? prompt,
     String? input,
   }) {
     return WorkflowStep(
       name: name ?? this.name,
       provider: provider ?? this.provider,
-      prompt: prompt ?? this.prompt,
+
       input: input ?? this.input,
       role: role,
     );

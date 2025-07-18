@@ -8,16 +8,18 @@ import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
 import 'package:process/process.dart';
 
-// void main() {
-//   WorkflowRepository().writeWorkflow(
-//     WorkflowStep(
-//       name: 'test1',
-//       provider: Provider.claudeCode,
-//       prompt: 'You are a helpful coding assistant.',
-//     ),
-//     File('.deep_agent/workflows.jsonl'),
-//   );
-// }
+void main() {
+  WorkflowRepository().createWorkflows(
+    [
+      WorkflowStep(
+        name: 'step1',
+        provider: Provider.claudeCode,
+        role: AIRole.Architect,
+      ),
+    ],
+    File('.deep_agent/workflows.jsonl'),
+  );
+}
 
 class WorkflowRepository {
   Future<List<WorkflowStep>> loadWorkflows(File workflowFile) async {
@@ -31,18 +33,14 @@ class WorkflowRepository {
     }).toList();
   }
 
-  void writeWorkflow(
-    WorkflowStep workflow,
-    File workflowFile,
-  ) {
-    final json = jsonEncode(workflow.toJson());
-    workflowFile.writeAsStringSync('$json\n', mode: FileMode.append);
+  void createWorkflows(List<WorkflowStep> workflows, File workflowFile) {
+    final lines = workflows.map((step) => jsonEncode(step.toJson())).toList();
+    workflowFile.writeAsStringSync(lines.join('\n'));
   }
 
   String _getTemplate({
     required AIRole role,
     required String userPrompt,
-    required String systemPrompt,
   }) {
     late String prompt;
 
@@ -147,17 +145,16 @@ ${jsonEncode(AIResponse(
     bool shouldContinue = true,
   }) async {
     final provider = _getProvider(workflow.provider, processManager, logger);
-    if (shouldContinue) {
+    if (!shouldContinue) {
       return provider.prompt(
-        shouldContinue: shouldContinue,
+        shouldContinue: false,
         _getTemplate(
           role: role,
-          userPrompt: workflow.input ?? '',
-          systemPrompt: workflow.prompt,
+          userPrompt: workflow.input!,
         ),
       );
     } else {
-      return provider.prompt(workflow.prompt);
+      return provider.prompt(workflow.input!);
     }
   }
 

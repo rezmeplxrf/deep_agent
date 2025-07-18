@@ -1,2 +1,0 @@
-{"name":"test1","provider":"claudeCode","prompt":"You are a helpful coding assistant."}
-{"name":"test2","provider":"claudeCode","prompt":"Review the recently edited code (only *.dart) by checking git diff and suggest improvement without implementing any changes directly"}

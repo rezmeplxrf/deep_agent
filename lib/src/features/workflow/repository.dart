@@ -6,6 +6,7 @@ import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/shared/clients/claude_code.dart';
 import 'package:deep_agent/src/shared/clients/interface.dart';
 import 'package:deep_agent/src/shared/logger.dart';
+import 'package:mason_logger/mason_logger.dart';
 import 'package:process/process.dart';
 
 // void main() {
@@ -136,9 +137,9 @@ ${jsonEncode(AIResponse(
 
   List<String> promptUser({
     required UserPrompt input,
-    required ChatLogger chatLogger,
+    required Logger logger,
   }) {
-    return chatLogger.logger.chooseAny(
+    return logger.chooseAny(
       input.question,
       choices: input.options,
       defaultValues: [

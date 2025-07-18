@@ -3,15 +3,16 @@ import 'dart:io';
 import 'package:deep_agent/src/features/workflow/domain.dart';
 import 'package:deep_agent/src/features/workflow/repository.dart';
 import 'package:deep_agent/src/shared/logger.dart';
+import 'package:mason_logger/mason_logger.dart';
 import 'package:process/process.dart';
 
-void main() async {
-  final service = WorkflowService();
-  final results = await service.run(
-    'Write a medium level leet code question in `./test/[question_name].dart` directory with the efficient solution. - except to the two-sum question',
-  );
-  print(results);
-}
+// void main() async {
+//   final service = WorkflowService();
+//   final results = await service.run(
+//     'Write a medium level leet code question in `./test/[question_name].dart` directory with the efficient solution. - except to the two-sum question',
+//   );
+//   print(results);
+// }
 
 class WorkflowService {
   final ProcessManager _processManager = const LocalProcessManager();
@@ -24,13 +25,14 @@ class WorkflowService {
   // 3. If error occurs, log the error and stop the workflows
   Future<List<WorkflowResult>> run(
     String userPrompt, {
+    required Logger logger,
     File? workflowFile,
   }) async {
     final workFlows = await _repository.loadWorkflows(
       workflowFile ?? File(_defaultWorkflowPath),
     );
     if (workFlows.isEmpty) {
-      _chatLogger.logger.err(
+      logger.err(
         'No workflows found in ${workflowFile?.path ?? _defaultWorkflowPath}',
       );
       return [];
@@ -44,7 +46,7 @@ class WorkflowService {
         input: (i == 0) ? userPrompt : previousResponse?.output,
       );
 
-      _chatLogger.logger.info('Running workflow step: ${workflow.name}');
+      logger.info('Running workflow step: ${workflow.name}');
       final intialResponse = await _repository.promptAI(
         workflow: workflow,
         processManager: _processManager,
@@ -53,10 +55,10 @@ class WorkflowService {
         role: workflow.role,
       );
       if (intialResponse.output != null) {
-        _chatLogger.logger.info(intialResponse.output);
+        logger.info(intialResponse.output);
       }
       if (intialResponse.error != null) {
-        _chatLogger.logger.err(intialResponse.error);
+        logger.err(intialResponse.error);
         results.add(
           WorkflowResult(
             success: false,
@@ -72,7 +74,7 @@ class WorkflowService {
       while (workflow.role == AIRole.Architect && response.askUser != null) {
         final userResponse = _repository.promptUser(
           input: response.askUser!,
-          chatLogger: _chatLogger,
+          logger: logger,
         );
         response = await _repository.pipeUserInput(
           prompt: userResponse.join(', '),
@@ -81,13 +83,13 @@ class WorkflowService {
           logger: _chatLogger,
         );
         if (response.error != null) {
-          _chatLogger.logger.err(response.error);
+          logger.err(response.error);
           break;
         }
       }
 
       if (response.output != null) {
-        _chatLogger.logger.success('${response.output}');
+        logger.success('${response.output}');
         results.add(
           WorkflowResult(
             response: response,

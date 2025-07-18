@@ -8,7 +8,7 @@ import 'package:pub_updater/pub_updater.dart';
 
 const executableName = 'deep_agent';
 const packageName = 'deep_agent';
-const description = 'A Very Good Project created by Very Good CLI.';
+const description = 'A CLI tool for managing AI workflows and tasks.';
 
 /// {@template deep_agent_command_runner}
 /// A [CommandRunner] for the CLI.
@@ -37,7 +37,7 @@ class DeepAgentCommandRunner extends CompletionCommandRunner<int> {
       );
 
     // Add sub commands
-    addCommand(SampleCommand(logger: _logger));
+    addCommand(PromptCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }
 

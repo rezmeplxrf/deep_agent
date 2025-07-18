@@ -3,8 +3,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:mason_logger/mason_logger.dart';
-
 enum Role {
   user,
   assistant,
@@ -17,9 +15,6 @@ class ChatLogger {
     : _logFile = (filePath != null) ? File(filePath) : File(_defaultLogFile) {
     _init();
   }
-  final logger = Logger(
-    level: Level.verbose,
-  );
 
   static const _defaultLogFile = './.deep_agent/log.jsonl';
   static final Map<String, IOSink> _sinks = {};

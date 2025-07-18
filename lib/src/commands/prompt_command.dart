@@ -22,10 +22,11 @@ class PromptCommand extends Command<int> {
   @override
   Future<int> run() async {
     final userPrompt = (argResults?['prompt'] as String?)?.trim();
-    if (userPrompt == null || userPrompt.isEmpty) {
+    if (userPrompt == null || userPrompt.trim().isEmpty) {
       _logger.err('Please provide a prompt using --prompt or -p flag.');
       return ExitCode.usage.code;
     }
+
     final service = WorkflowService();
     final results = await service.run(userPrompt, logger: _logger);
     if (results.isEmpty) {

@@ -180,5 +180,29 @@ void main() {
         verify(() => logger.detail('    - cyan: true')).called(1);
       });
     });
+
+    group('--prompt', () {
+      test('handles prompt at root level', () async {
+        final result = await commandRunner.run(['-p', 'hello']);
+        expect(result, equals(ExitCode.success.code));
+      });
+
+      test('handles prompt with long flag', () async {
+        final result = await commandRunner.run(['--prompt', 'hello']);
+        expect(result, equals(ExitCode.success.code));
+      });
+
+      test('shows error when prompt is empty', () async {
+        final result = await commandRunner.run(['-p', '']);
+        expect(result, equals(ExitCode.usage.code));
+        verify(() => logger.err('Please provide a prompt using --prompt or -p flag.')).called(1);
+      });
+
+      test('shows error when prompt is only whitespace', () async {
+        final result = await commandRunner.run(['-p', '   ']);
+        expect(result, equals(ExitCode.usage.code));
+        verify(() => logger.err('Please provide a prompt using --prompt or -p flag.')).called(1);
+      });
+    });
   });
 }

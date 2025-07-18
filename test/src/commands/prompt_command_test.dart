@@ -26,13 +26,13 @@ void main() {
     });
 
     test('accepts prompt with -p flag', () async {
-      final exitCode = await commandRunner.run(['prompt', '-p', 'hello']);
+      final exitCode = await commandRunner.run([ '-p', 'hello']);
 
       expect(exitCode, ExitCode.success.code);
     });
 
     test('accepts prompt with --prompt flag', () async {
-      final exitCode = await commandRunner.run(['prompt', '--prompt', 'hello']);
+      final exitCode = await commandRunner.run([ '--prompt', 'hello']);
 
       expect(exitCode, ExitCode.success.code);
     });

@@ -34,6 +34,11 @@ class DeepAgentCommandRunner extends CompletionCommandRunner<int> {
       ..addFlag(
         'verbose',
         help: 'Noisy logging, including all shell commands executed.',
+      )
+      ..addOption(
+        'prompt',
+        abbr: 'p',
+        help: 'Prompts the AI with a given task',
       );
 
     // Add sub commands

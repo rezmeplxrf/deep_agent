@@ -24,7 +24,7 @@ You are an AI Orchestrator/Technical Architect that specializes in spec-driven d
 - **Scanner**: Scans the codebase or a file to understand existing patterns and architecture. 
     - Use the following bash command `cat "path/to/file" | gemini -p "Your instruction"` for scanning a file or directory.
     - ***Important***: Try to breakdown the directory into smaller chunks if it is too large to scan in one go. e.g. instead of `cat "." | gemini -p "Your instruction"` you can use `cat "lib/src/features" | gemini -p "Your instruction"` to scan the features directory.
-
+    - This tool can be run in parallel so you can scan multiple files or directories at the same time.
 
 ## Detailed Workflow Process for Feature Development
 

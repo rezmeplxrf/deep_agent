@@ -42,7 +42,7 @@ class DeepAgentCommandRunner extends CompletionCommandRunner<int> {
       );
 
     // Add sub commands
-    addCommand(PromptCommand(logger: _logger));
+    addCommand(SetupCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }
 

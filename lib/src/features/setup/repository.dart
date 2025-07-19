@@ -1,14 +1,20 @@
 import 'dart:io';
 
+import 'package:deep_agent/src/features/setup/best-pratices/dart.dart';
+import 'package:deep_agent/src/features/setup/best-pratices/flutter.dart';
+import 'package:deep_agent/src/features/setup/best-pratices/nextjs.dart';
+import 'package:deep_agent/src/features/setup/roles/developer.dart';
 import 'package:deep_agent/src/features/setup/roles/ochestrator.dart';
+import 'package:deep_agent/src/features/setup/roles/reviwer.dart';
 import 'package:deep_agent/src/features/setup/templates/design.dart';
 import 'package:deep_agent/src/features/setup/templates/requirements.dart';
 
 class SetupRepository {
   Future<void> setup() async {
     _createClaudeFiles();
-    _writeBaseInstruction();
     _createTemplates();
+    _createBestPractices();
+    _createRoles();
   }
 
   void _createClaudeFiles() {
@@ -27,15 +33,6 @@ class SetupRepository {
     }
   }
 
-  void _writeBaseInstruction() {
-    final baseFile = File('./CLAUDE.md');
-    if (!baseFile.existsSync()) {
-      baseFile
-        ..createSync(recursive: true)
-        ..writeAsStringSync(baseInstruction);
-    }
-  }
-
   void _createTemplates() {
     final designTemplate = File('./.claude/templates/design-template.md');
     if (!designTemplate.existsSync()) {
@@ -50,6 +47,43 @@ class SetupRepository {
       requirementsTemplate
         ..createSync(recursive: true)
         ..writeAsStringSync(requirementsTemplateContent);
+    }
+  }
+
+  void _createBestPractices() {
+    final bestPracticesDir = Directory('./.claude/best-practices');
+    if (!bestPracticesDir.existsSync()) {
+      bestPracticesDir.createSync(recursive: true);
+      File(
+        './.claude/best-practices/dart.md',
+      ).writeAsStringSync(dartInstruction);
+      File(
+        './.claude/best-practices/flutter.md',
+      ).writeAsStringSync(flutterInstruction);
+      File(
+        './.claude/best-practices/nextjs.md',
+      ).writeAsStringSync(nextjsInstruction);
+    }
+  }
+
+  void _createRoles() {
+    final baseFile = File('./CLAUDE.md');
+    if (!baseFile.existsSync()) {
+      baseFile
+        ..createSync(recursive: true)
+        ..writeAsStringSync(baseInstruction);
+    }
+    final developerFile = File('./.claude/commands/develop.md');
+    if (!developerFile.existsSync()) {
+      developerFile
+        ..createSync(recursive: true)
+        ..writeAsStringSync(developerCommandContent);
+    }
+    final reviewerFile = File('./.claude/commands/review.md');
+    if (!reviewerFile.existsSync()) {
+      reviewerFile
+        ..createSync(recursive: true)
+        ..writeAsStringSync(reviewerCommandContent);
     }
   }
 }

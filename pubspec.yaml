@@ -1,5 +1,5 @@
 name: deep_agent
-description: Interactive CLI application for Coding Agents like Claude Code
+description: Set up commands and instructions for Claude Code.
 version: 0.0.9
 repository: https://github.com/rezmeplxrf/deep_agent
 topics:

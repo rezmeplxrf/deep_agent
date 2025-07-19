@@ -1,6 +1,6 @@
 name: deep_agent
 description: Set up commands and instructions for Claude Code.
-version: 0.0.13
+version: 0.0.14
 repository: https://github.com/rezmeplxrf/deep_agent
 topics:
   - cli

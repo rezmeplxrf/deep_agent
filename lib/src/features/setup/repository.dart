@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:deep_agent/src/features/setup/best-pratices/dart.dart';
 import 'package:deep_agent/src/features/setup/best-pratices/flutter.dart';
 import 'package:deep_agent/src/features/setup/best-pratices/nextjs.dart';
+import 'package:deep_agent/src/features/setup/commands/project.dart';
 import 'package:deep_agent/src/features/setup/roles/developer.dart';
 import 'package:deep_agent/src/features/setup/roles/ochestrator.dart';
 import 'package:deep_agent/src/features/setup/roles/reviwer.dart';
@@ -16,6 +17,7 @@ class SetupRepository {
     _createTemplates();
     _createBestPractices();
     _createRoles();
+    _createCommands();
   }
 
   void _createClaudeFiles() {
@@ -91,6 +93,15 @@ class SetupRepository {
       reviewerFile
         ..createSync(recursive: true)
         ..writeAsStringSync(reviewerCommandContent);
+    }
+  }
+
+  void _createCommands() {
+    final overview = File('./.claude/commands/project-overview.md');
+    if (!overview.existsSync()) {
+      overview
+        ..createSync(recursive: true)
+        ..writeAsStringSync(projectDesignContent);
     }
   }
 }

@@ -8,6 +8,7 @@ import 'package:deep_agent/src/features/setup/roles/ochestrator.dart';
 import 'package:deep_agent/src/features/setup/roles/reviwer.dart';
 import 'package:deep_agent/src/features/setup/templates/design.dart';
 import 'package:deep_agent/src/features/setup/templates/requirements.dart';
+import 'package:deep_agent/src/features/setup/templates/task.dart';
 
 class SetupRepository {
   Future<void> setup() async {
@@ -47,6 +48,12 @@ class SetupRepository {
       requirementsTemplate
         ..createSync(recursive: true)
         ..writeAsStringSync(requirementsTemplateContent);
+    }
+    final taskTemplate = File('./.claude/templates/task-template.md');
+    if (!taskTemplate.existsSync()) {
+      taskTemplate
+        ..createSync(recursive: true)
+        ..writeAsStringSync(taskTemplateContent);
     }
   }
 

@@ -3,17 +3,13 @@ import 'package:deep_agent/src/features/setup/repository.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 class SetupCommand extends Command<int> {
-  SetupCommand({required Logger logger}) : _logger = logger {
-    argParser.addCommand(
-      'init',
-    );
-  }
+  SetupCommand({required Logger logger}) : _logger = logger;
 
   @override
   String get description => 'A command to initialize the setup process';
 
   @override
-  String get name => 'prompt';
+  String get name => 'init';
 
   final Logger _logger;
 

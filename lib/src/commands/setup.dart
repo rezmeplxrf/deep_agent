@@ -15,9 +15,40 @@ class SetupCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    _logger.info('Initializing setup...');
-    await SetupRepository().setup();
+    final appName = _logger.prompt(
+      'Enter the application name',
+      defaultValue: 'MyApp',
+    );
+    final frameworkStr = _logger.chooseOne(
+      'Select framework',
+      choices: [
+        'Flutter',
+        'Dart',
+        'BHRV Web',
+      ],
+    );
+    late final Framework framework;
+    switch (frameworkStr.toLowerCase()) {
+      case 'flutter':
+        framework = Framework.flutter;
+      case 'dart':
+        framework = Framework.dart;
+      case 'bhrv web':
+        framework = Framework.web;
+      default:
+        _logger.err('Invalid framework selected.');
+        return ExitCode.usage.code;
+    }
+    _logger.info('Selected framework: $framework');
+
+    await SetupRepository().setup(appName, framework);
     _logger.success('Setup completed successfully.');
     return ExitCode.success.code;
   }
+}
+
+enum Framework {
+  flutter,
+  dart,
+  web,
 }

@@ -1,33 +1,42 @@
 import 'dart:io';
 
+import 'package:deep_agent/src/commands/commands.dart';
 import 'package:deep_agent/src/features/setup/best-pratices/dart.dart';
 import 'package:deep_agent/src/features/setup/best-pratices/flutter.dart';
-import 'package:deep_agent/src/features/setup/best-pratices/web.dart';
 
 class SetupRepository {
-  Future<void> setup() async {
-    _createBestPractices();
+  Future<void> setup(String appName, Framework framework) async {
+    _createCommands(appName, framework);
   }
 
-  void _createBestPractices() {
+  void _createCommands(String appName, Framework framework) {
     final commandDir = Directory('./.claude/commands');
     if (!commandDir.existsSync()) {
       commandDir.createSync(recursive: true);
     }
     if (!commandDir.existsSync()) {
       commandDir.createSync(recursive: true);
-      File(
-        './.claude/command/dart.md',
-      ).writeAsStringSync(dartInstruction);
-      File(
-        './.claude/command/flutter.md',
-      ).writeAsStringSync(flutterInstruction);
-      File(
-        './.claude/command/nextjs.md',
-      ).writeAsStringSync(nextjsInstruction);
-      File(
-        './.claude/command/base.md',
-      ).writeAsStringSync(baseInstruction);
+
+      switch (framework) {
+        case Framework.flutter:
+          File(
+            './.claude/command/flutter.md',
+          ).writeAsStringSync(
+            flutterInstruction.replaceAll('[Application]', '[$appName]'),
+          );
+        case Framework.dart:
+          File(
+            './.claude/command/dart.md',
+          ).writeAsStringSync(
+            dartInstruction.replaceAll('[Application]', '[$appName]'),
+          );
+        case Framework.web:
+          File(
+            './.claude/command/base.md',
+          ).writeAsStringSync(
+            baseInstruction.replaceAll('[Application]', '[$appName]'),
+          );
+      }
     }
   }
 }
@@ -71,15 +80,8 @@ You must also update the [task_name].md accordingly if the context changes and m
 - Class, functions, variables name should be self-explanatory.
 - Use enums instead of Strings for fixed sets of values.
 - Use Data Models according to the language's conventions.
-- Avoid copying/storing potentially large data. Instead store the indices of the necessary data in the Map, using unique key, and then find the needed value from the original data using the Map.
-- Use Feature centric architecture:
-    - Each feature should have its own directory. e.g. `/src/features/[feature_name]/`
-    - Avoid cross-feature dependencies to maintain modularity.
-    - Ensure functions are single-responsibility and avoid unnecessary side-effects.
-    - Avoid modifying parameters/class state directly from within sub functions.
-- Apply Repository-Service Pattern:
-    - Use repositories to abstract data access and provide a clean API for the service layer.
-    - Keep business logic in services, and use repositories for data retrieval and persistence.
+- Avoid copying/storing potentially large data. Instead store the indices of the necessary data in the Map, using references, and then find the needed value from the original data using the Map.
+- Use Feature first (Domain Driven Design) architecture.
 - Follow language/framework conventions for naming and structuring code.
 - Follow performance best practices, such as avoiding unnecessary computations and using efficient data structures.
 - Avoid creating potentially duplicate functions, variables, or classes.

@@ -25,7 +25,7 @@ You are a Flutter developer and I am the Product Owner. Your task is to develop 
     - Application: Connects repositories and Application implementations. e.g. `lib/src/features/[feature_name]/service.dart`
     - Presentation: Handles UI and user interactions. e.g. `lib/src/features/[feature_name]/presentation.dart`
     - Shared files should be placed in `lib/src/shared/[descriptive_name].dart`.
-- Use Freezed models for any complex objects.
+- Use Freezed models for any complex objects that required comparison.
 - Use `flutter_hooks` for internal state management inside Presentations.
 - Use `riverpod` code generation annotations for global state management and data fetch/manipulation.
 - Ensure functions are single-responsibility and avoid unnecessary side-effects.

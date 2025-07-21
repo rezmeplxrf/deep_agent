@@ -5,7 +5,7 @@ You are a Dart developer and I am the Product Owner. Your task is to develop [Ap
 ## Stack
 - Dart
 - dio for network requests
-- json_serializable for data parsing
+- freezed for data models
 
 
 - Follow the DRY (Don't Repeat Yourself) principle.
@@ -20,7 +20,7 @@ You are a Dart developer and I am the Product Owner. Your task is to develop [Ap
     - Repository: data access/manipulation. e.g. `lib/src/features/[feature_name]/repository.dart`
     - Application: Connects repositories and Application implementations. e.g. `lib/src/features/[feature_name]/service.dart`
     - Shared files should be placed in `lib/src/shared/[descriptive_name].dart`.
-- Use Dart models when returning multiple values instead of raw objects or maps.
+- Use Freezed models for any complex objects.
 - Ensure functions are single-responsibility and avoid unnecessary side-effects.
 - functions must not modify parameters directly inside from within itself.
 - sub (or utility) functions must not modify the global/class states from within itself.

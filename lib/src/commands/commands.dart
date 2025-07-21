@@ -1,2 +1,2 @@
-export 'setup.dart';
+export 'init.dart';
 export 'update.dart';

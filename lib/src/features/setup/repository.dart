@@ -2,64 +2,32 @@ import 'dart:io';
 
 import 'package:deep_agent/src/features/setup/best-pratices/dart.dart';
 import 'package:deep_agent/src/features/setup/best-pratices/flutter.dart';
-import 'package:deep_agent/src/features/setup/best-pratices/nextjs.dart';
-import 'package:deep_agent/src/features/setup/commands/project.dart';
+import 'package:deep_agent/src/features/setup/best-pratices/web.dart';
 
 class SetupRepository {
   Future<void> setup() async {
-    _createClaudeFiles();
     _createBestPractices();
-    _createRoles();
-    _createCommands();
-  }
-
-  void _createClaudeFiles() {
-    final commandDir = Directory('./.claude/commands');
-    final specDir = Directory('./.claude/specs');
-    final templateDir = Directory('./.claude/templates');
-
-    if (!commandDir.existsSync()) {
-      commandDir.createSync(recursive: true);
-    }
-    if (!specDir.existsSync()) {
-      specDir.createSync(recursive: true);
-    }
-    if (!templateDir.existsSync()) {
-      templateDir.createSync(recursive: true);
-    }
   }
 
   void _createBestPractices() {
-    final bestPracticesDir = Directory('./.claude/best-practices');
-    if (!bestPracticesDir.existsSync()) {
-      bestPracticesDir.createSync(recursive: true);
+    final commandDir = Directory('./.claude/commands');
+    if (!commandDir.existsSync()) {
+      commandDir.createSync(recursive: true);
+    }
+    if (!commandDir.existsSync()) {
+      commandDir.createSync(recursive: true);
       File(
-        './.claude/best-practices/dart.md',
+        './.claude/command/dart.md',
       ).writeAsStringSync(dartInstruction);
       File(
-        './.claude/best-practices/flutter.md',
+        './.claude/command/flutter.md',
       ).writeAsStringSync(flutterInstruction);
       File(
-        './.claude/best-practices/nextjs.md',
+        './.claude/command/nextjs.md',
       ).writeAsStringSync(nextjsInstruction);
-    }
-  }
-
-  void _createRoles() {
-    final baseFile = File('./CLAUDE.md');
-    if (!baseFile.existsSync()) {
-      baseFile
-        ..createSync(recursive: true)
-        ..writeAsStringSync(baseInstruction);
-    }
-  }
-
-  void _createCommands() {
-    final overview = File('./.claude/commands/project-overview.md');
-    if (!overview.existsSync()) {
-      overview
-        ..createSync(recursive: true)
-        ..writeAsStringSync(projectDesignContent);
+      File(
+        './.claude/command/base.md',
+      ).writeAsStringSync(baseInstruction);
     }
   }
 }
@@ -73,7 +41,7 @@ Your responsibility is to plan, assign, and oversee the completion of coding tas
 Based on the provided context and project structure, assign modular tasks to subagents, ensuring that each task is clear and manageable.
 You can assign tasks to multiple subagents by using Task Tool.
 Ensure each agent follows the best practices outlined in the project context.
-You must write your plans in `./.claude/features/[feature_name]/tasks/[task_name].md` file.
+You must write your plans in `./.agents/features/[feature_name]/tasks/[task_name].md` file.
 You must also update the [task_name].md accordingly if the context changes and mark if certain objective is completed.
 
 # [task_name].md template
@@ -95,46 +63,8 @@ You must also update the [task_name].md accordingly if the context changes and m
 - [ ] [task_progress_3]
 ```
 
-# Project Context
-This is a Dart backend (`/backend`) + Flutter frontend (`/frontend`) project for a tracking prices from E-commerce websites. The backend handles product tracking and the frontend provides a user interface for adding and managing tracking conditions.
-
-Project structure:
-```
-.
-├── backend
-│   ├── lib
-│   │   ├── repository
-│   │   │   ├── auctions  # Auction data sources
-│   │   │   ├── sources   # Data sources for fetching product information
-│   │   │   ├── interface.dart # interface for data repository
-│   │   ├── service
-│   │   │   ├── firebase.dart # for authentication and tracking results
-│   │   │   ├── redis.dart # store user data (and tracking requests) and TrackingRequest for faster access
-│   │   │   ├── tracking.dart # for Actual tracking logic with comparison and notification
-│   │   │   ├── utils.dart # for mostly webhook related utilities and backend specific utilities
-│   ├── routes
-│   │   ├── user # for adding user data to redis (mostly for webhook url)
-│   │   ├── tracking # for adding TrackingRequest and returning TrackingResults from redis
-├──core
-│   ├── lib
-│   │   ├── models.dart # for data models used across the backend/frontend
-│   │   ├── utils.dart # for utility functions and extensions across the backend/frontend
-├── frontend
-│   ├── lib
-│   │   ├── features
-│   │   │   ├── tracking # for adding and managing tracking conditions
-│   │   │   ├── setting 
-│   │   │   ├── auth
-│   │   │   ├── dashboard
-│   ├── src
-│   │   ├── shared
-│   │   │   ├── router.dart # routing logic using go_router
-│   │   │   ├── theme.dart # for global theming and styling
-│   ├── Widgets # Reusable widgets used across the app
-```
-
 # Best Practices
-- Check project setting file (e.g. `pubspec.yaml` for dart/flutter and `package.json` for js frameworks) for dependencies first.
+- Check project setting file for dependencies first.
 - Use existing libraries defined in the project setting file to avoid installing new ones and re-inventing the wheel.
 - Follow the DRY (Don't Repeat Yourself) principle.
 - Do not add any comments or unnecessary print statements in the code.

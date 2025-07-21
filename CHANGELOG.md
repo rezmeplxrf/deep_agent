@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.15] - 2025-07-14
+## [0.0.16] - 2025-07-14
 
 ### Added
 - Initial release of **DeepAgent**.

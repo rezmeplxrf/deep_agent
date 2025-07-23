@@ -9,7 +9,7 @@ class SetupCommand extends Command<int> {
   String get description => 'A command to initialize the setup process';
 
   @override
-  String get name => 'init';
+  String get name => 'i';
 
   final Logger _logger;
 

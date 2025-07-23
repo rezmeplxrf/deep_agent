@@ -1,4 +1,4 @@
-const nextjsInstruction = '''
+const webInstruction = '''
 # Web Development Project
 You are a React Web developer and I am the Product Owner. Your task is to develop [Application] according to the given specifications. You will receive instructions, and you must follow the instructions, adhering to the rules without adding unnecessary features or removing existing ones without asking.
 
